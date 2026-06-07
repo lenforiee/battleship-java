@@ -3,11 +3,15 @@ package views;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.effect.BlurType;
 import javafx.scene.effect.DropShadow;
+import javafx.scene.effect.Effect;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -59,6 +63,10 @@ public abstract class AbstractView {
         this.stage.initOwner(parentStage);
     }
 
+    public void closeStage() {
+        this.stage.close();
+    }
+
     private void initRoot(int padding) {
         this.root = new VBox(15);
         this.root.setAlignment(Pos.CENTER);
@@ -80,5 +88,27 @@ public abstract class AbstractView {
     private void initScene(int width, int height) {
         this.scene = new Scene(this.root, width, height);
         this.scene.setFill(Color.TRANSPARENT);
+    }
+
+    public Button createStyledButton(String text, Paint textColour, String bgColour, String borderColour, Effect btnEffect, Effect textEffect, Font font) {
+        Button btn = new Button();
+        Text btnText = new Text(text);
+        btnText.setEffect(textEffect);
+        btnText.setFont(font);
+        btnText.setFill(textColour);
+        btn.setGraphic(btnText);
+
+        btn.setEffect(btnEffect);
+        btn.setStyle("-fx-background-color:" + bgColour + "; -fx-background-radius: 15px; -fx-border-radius: 15px; -fx-border-color: " + borderColour + "; -fx-pref-width: 300px; -fx-pref-height: 50px; -fx-border-width: 2px");
+
+        btn.setOnMouseEntered(e -> {
+            btn.setOpacity(0.8);
+        });
+
+        btn.setOnMouseExited(e -> {
+            btn.setOpacity(1);
+        });
+
+        return btn;
     }
 }

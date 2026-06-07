@@ -67,14 +67,15 @@ public class SettingsView extends AbstractView {
             GameConfig.bonusMoveOnHit = !GameConfig.bonusMoveOnHit;
         });
 
-        Button abortBtn = new Button();
-        Text abortText = new Text("COFNIJ");
-        abortText.setEffect(DS_BLACK);
-        abortText.setFont(FONT_MAIN_25);
-        abortText.setFill(Color.rgb(172, 199, 200));
-        abortBtn.setEffect(DS_RED);
-        abortBtn.setGraphic(abortText);
-        abortBtn.setStyle("-fx-background-color: #1D2E36; -fx-background-radius: 15px; -fx-border-radius: 15px; -fx-border-color: #9F7A79; -fx-pref-width: 300px; -fx-pref-height: 50px; -fx-border-width: 2px");
+        Button abortBtn = this.createStyledButton(
+                "COFNIJ",
+                Color.rgb(172, 199, 200),
+                "#1D2E36",
+                "#9F7A79",
+                DS_RED,
+                DS_BLACK,
+                FONT_MAIN_25
+        );
 
         abortBtn.setOnAction(e -> {
             this.stage.close();

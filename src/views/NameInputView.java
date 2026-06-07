@@ -1,5 +1,6 @@
 package views;
 
+import config.GameConfig;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
@@ -10,8 +11,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 public class NameInputView extends AbstractView {
-    public String name1 = "";
-    public String name2 = "";
 
     private final Button acceptBtn;
 
@@ -36,15 +35,9 @@ public class NameInputView extends AbstractView {
         titleNick1.setEffect(DS_BLACK);
         titleNick1.setFont(FONT_MAIN_25);
 
-        TextField nick1 = new TextField();
-        nick1.setPromptText("(Twój nick...)");
-        nick1.setEffect(DS_BLACK);
-        nick1.setFont(FONT_MAIN_25);
-
-        nick1.setEffect(DS_BLUE);
-        nick1.setStyle("-fx-text-fill: #acc7c8; -fx-background-color: #1D2E36; -fx-background-radius: 15px; -fx-border-radius: 15px; -fx-border-color: #63888E; -fx-pref-width: 200px; -fx-pref-height: 50px; -fx-border-width: 2px");
+        TextField nick1 = this.createTextField("(Twój nick...)");
         nick1.setOnKeyTyped(e -> {
-            this.name1 = nick1.getText();
+            GameConfig.username1 = nick1.getText();
         });
 
         Text titleNick2 = new Text("WPISZ NICK PRZECIWNIKA (GRACZ 2)");
@@ -52,37 +45,33 @@ public class NameInputView extends AbstractView {
         titleNick2.setEffect(DS_BLACK);
         titleNick2.setFont(FONT_MAIN_25);
 
-        TextField nick2 = new TextField();
-        nick2.setPromptText("(Nick przeciwnika...)");
-        nick2.setEffect(DS_BLACK);
-        nick2.setFont(FONT_MAIN_25);
-
-        nick2.setEffect(DS_BLUE);
-        nick2.setStyle("-fx-text-fill: #acc7c8; -fx-background-color: #1D2E36; -fx-background-radius: 15px; -fx-border-radius: 15px; -fx-border-color: #63888E; -fx-pref-width: 200px; -fx-pref-height: 50px; -fx-border-width: 2px");
+        TextField nick2 = this.createTextField("(Nick przeciwnika...)");
         nick2.setOnKeyTyped(e -> {
-            this.name2 = nick2.getText();
+            GameConfig.username2 = nick2.getText();
         });
 
         HBox buttonSpace = new HBox(20);
         buttonSpace.setAlignment(Pos.CENTER);
 
-        this.acceptBtn = new Button();
-        Text acceptText = new Text("POTWIERDŹ");
-        acceptText.setEffect(DS_BLACK);
-        acceptText.setFont(FONT_MAIN_25);
-        acceptText.setFill(Color.rgb(172, 199, 200));
-        this.acceptBtn.setGraphic(acceptText);
-        this.acceptBtn.setEffect(DS_GREEN);
-        this.acceptBtn.setStyle("-fx-background-color: #314644; -fx-background-radius: 15px; -fx-border-radius: 15px; -fx-border-color: #8CB59D; -fx-pref-width: 300px; -fx-pref-height: 50px; -fx-border-width: 2px");
+        this.acceptBtn = this.createStyledButton(
+                "POTWIERDŹ",
+                Color.rgb(172, 199, 200),
+                "#314644",
+                "#8CB59D",
+                DS_GREEN,
+                DS_BLACK,
+                FONT_MAIN_25
+        );
 
-        Button abortBtn = new Button();
-        Text abortText = new Text("ANULUJ");
-        abortText.setEffect(DS_BLACK);
-        abortText.setFont(FONT_MAIN_25);
-        abortText.setFill(Color.rgb(172, 199, 200));
-        abortBtn.setEffect(DS_RED);
-        abortBtn.setGraphic(abortText);
-        abortBtn.setStyle("-fx-background-color: #1D2E36; -fx-background-radius: 15px; -fx-border-radius: 15px; -fx-border-color: #9F7A79; -fx-pref-width: 300px; -fx-pref-height: 50px; -fx-border-width: 2px");
+        Button abortBtn = this.createStyledButton(
+                "ANULUJ",
+                Color.rgb(172, 199, 200),
+                "#1D2E36",
+                "#9F7A79",
+                DS_RED,
+                DS_BLACK,
+                FONT_MAIN_25
+        );
 
         abortBtn.setOnAction(e -> {
             this.stage.close();
@@ -97,6 +86,17 @@ public class NameInputView extends AbstractView {
         this.root.getChildren().add(buttonSpace);
 
         this.stage.show();
+    }
+
+    private TextField createTextField(String promptText) {
+        TextField textField = new TextField();
+        textField.setPromptText(promptText);
+        textField.setEffect(DS_BLACK);
+        textField.setFont(FONT_MAIN_25);
+
+        textField.setEffect(DS_BLUE);
+        textField.setStyle("-fx-text-fill: #acc7c8; -fx-background-color: #1D2E36; -fx-background-radius: 15px; -fx-border-radius: 15px; -fx-border-color: #63888E; -fx-pref-width: 200px; -fx-pref-height: 50px; -fx-border-width: 2px");
+        return textField;
     }
 
     public void setOnAcceptCallback(Runnable callback) {
