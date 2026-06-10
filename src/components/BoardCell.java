@@ -3,7 +3,6 @@ package components;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import models.Orientation;
 import models.Ship;
 
 public class BoardCell extends StackPane {
@@ -11,7 +10,6 @@ public class BoardCell extends StackPane {
     private final int y;
     private boolean wasShot = false;
     private Ship parentShip = null;
-    private String radiusStyle = "";
     private boolean isHovered = false;
 
     public BoardCell(int x, int y) {
@@ -21,6 +19,10 @@ public class BoardCell extends StackPane {
         this.setPrefSize(50, 50);
         this.applyCurrentPaint();
 
+        this.setDefaultActions();
+    }
+
+    public void setDefaultActions() {
         this.setOnMouseEntered(e -> {
             if (wasShot) return;
             this.isHovered = true;
@@ -66,22 +68,8 @@ public class BoardCell extends StackPane {
         this.changeStyle(bg, border);
     }
 
-    public void setCorners(Orientation orientation, boolean isFirst) {
-        boolean isVertical = orientation == Orientation.VERTICAL;
-
-        int tl = (isVertical && isFirst) || (!isVertical && isFirst) ? 10 : 0;
-        int tr = (isVertical && isFirst) || (!isVertical && !isFirst) ? 10 : 0;
-        int br = (isVertical && !isFirst) || (!isVertical && !isFirst) ? 10 : 0;
-        int bl = (isVertical && !isFirst) || (!isVertical && isFirst) ? 10 : 0;
-
-        this.radiusStyle = String.format("-fx-background-radius: %dpx %dpx %dpx %dpx; -fx-border-radius: %dpx %dpx %dpx %dpx;",
-                tl, tr, br, bl, tl, tr, br, bl);
-
-        this.applyCurrentPaint();
-    }
-
     private void changeStyle(String background, String border) {
-        this.setStyle("-fx-background-color: " + background + "; -fx-border-color: " + border + "; -fx-border-width: 0.5px;" + this.radiusStyle);
+        this.setStyle("-fx-background-color: " + background + "; -fx-border-color: " + border + "; -fx-border-width: 0.5px;");
     }
 
     private void handleOnClick() {

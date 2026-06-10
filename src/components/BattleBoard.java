@@ -43,12 +43,16 @@ public class BattleBoard extends GridPane {
             newShip.addCell(cell);
         }
 
-        if (shipSize > 1) {
-            targetCells.getFirst().setCorners(orientation, true);
-            targetCells.getLast().setCorners(orientation, false);
-        }
-
         return true;
+    }
+
+    public void clearBoard() {
+        this.getChildren().forEach(node -> {
+            if (node instanceof BoardCell cell) {
+                cell.setShip(null);
+                cell.applyCurrentPaint();
+            }
+        });
     }
 
     private boolean isNeighbouring(int currentX, int currentY, Ship ship) {

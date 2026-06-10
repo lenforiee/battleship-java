@@ -1,5 +1,6 @@
 package views;
 
+import components.GameManager;
 import javafx.application.Platform;
 import javafx.scene.control.Button;
 import javafx.scene.paint.Color;
@@ -32,7 +33,7 @@ public class MenuView extends AbstractView {
                 input.closeStage();
                 this.closeStage();
 
-                new BoardSetupView(stage);
+                GameManager.startGameBoardSetup(this.stage);
             });
         });
 

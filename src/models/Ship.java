@@ -32,4 +32,8 @@ public class Ship {
     public List<BoardCell> getCells() {
         return this.cells;
     }
+
+    public int getSize() {
+        return this.cells.size();
+    }
 }
