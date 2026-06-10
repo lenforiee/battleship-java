@@ -6,11 +6,9 @@ import java.util.List;
 
 public class Ship {
     private final List<BoardCell> cells = new ArrayList<>();
-    private final int size;
     private int hits = 0;
 
-    public Ship(int size) {
-        this.size = size;
+    public Ship() {
     }
 
     public void addCell(BoardCell cell) {
@@ -26,14 +24,11 @@ public class Ship {
     }
 
     public boolean isSunk() {
-        return this.hits >= this.size;
+        if (this.cells.isEmpty()) return false;
+        return this.hits >= this.cells.size();
     }
 
     public List<BoardCell> getCells() {
         return this.cells;
-    }
-
-    public int getSize() {
-        return this.cells.size();
     }
 }

@@ -52,6 +52,8 @@ public class AlertView extends AbstractView {
             closeStage();
         });
 
+        buttonContainer.getChildren().add(btnConfirm);
+
         if (showCancelButton) {
             Button btnCancel = this.createStyledButton(
                     "ANULUJ",
@@ -69,8 +71,6 @@ public class AlertView extends AbstractView {
             });
             buttonContainer.getChildren().add(btnCancel);
         }
-
-        buttonContainer.getChildren().add(btnConfirm);
 
         this.root.getChildren().addAll(textContainer, buttonContainer);
 

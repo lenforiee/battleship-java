@@ -18,7 +18,6 @@ public class BoardCell extends StackPane {
 
         this.setPrefSize(50, 50);
         this.applyCurrentPaint();
-
         this.setDefaultActions();
     }
 
@@ -35,7 +34,10 @@ public class BoardCell extends StackPane {
             applyCurrentPaint();
         });
 
-        this.setOnMouseClicked(e -> handleOnClick());
+        this.setOnMouseClicked(e -> {
+            if (config.GameConfig.turnTimer == null) return;
+            GameManager.handleShot(this.x, this.y);
+        });
     }
 
     public int getX() {
@@ -46,6 +48,14 @@ public class BoardCell extends StackPane {
         return this.y;
     }
 
+    public boolean isAlreadyShot() {
+        return this.wasShot;
+    }
+
+    public models.Ship getShip() {
+        return this.parentShip;
+    }
+    
     public void setShip(Ship ship) {
         this.parentShip = ship;
         this.applyCurrentPaint();
@@ -72,7 +82,7 @@ public class BoardCell extends StackPane {
         this.setStyle("-fx-background-color: " + background + "; -fx-border-color: " + border + "; -fx-border-width: 0.5px;");
     }
 
-    private void handleOnClick() {
+    public void handleOnClick() {
         if (this.wasShot) return;
         this.wasShot = true;
 
@@ -84,7 +94,5 @@ public class BoardCell extends StackPane {
             dot.setOpacity(0.6);
             this.getChildren().add(dot);
         }
-
-        this.applyCurrentPaint();
     }
 }

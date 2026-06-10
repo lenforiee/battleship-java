@@ -25,12 +25,32 @@ public class BattleBoard extends GridPane {
         setStyle("-fx-border-color: #324B56; -fx-border-width: 2px; -fx-background-radius: 5px; -fx-border-radius: 5px; -fx-background-color: #18252B; -fx-padding: 0; -fx-hgap: 0; -fx-vgap: 0;");
     }
 
+    public void setInteractionAllowed(boolean allowed) {
+        this.setMouseTransparent(!allowed);
+    }
+
+    public BoardCell getCell(int x, int y) {
+        return this.cells[x][y];
+    }
+
+    public boolean areAllShipsSunk() {
+        for (int row = 0; row < size; row++) {
+            for (int col = 0; col < size; col++) {
+                BoardCell cell = cells[col][row];
+                if (cell.hasShip() && !cell.getShip().isSunk()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     public boolean placeShip(int startX, int startY, int shipSize, Orientation orientation) {
         if (orientation == Orientation.VERTICAL && startY + shipSize > this.size) return false;
         if (orientation == Orientation.HORIZONTAL && startX + shipSize > this.size) return false;
 
         List<BoardCell> targetCells = new ArrayList<>();
-        Ship newShip = new Ship(shipSize);
+        Ship newShip = new Ship();
         for (int i = 0; i < shipSize; i++) {
             int currentX = orientation == Orientation.VERTICAL ? startX : startX + i;
             int currentY = orientation == Orientation.HORIZONTAL ? startY : startY + i;

@@ -1,6 +1,7 @@
 package config;
 
 import components.BattleBoard;
+import javafx.animation.Timeline;
 
 public class GameConfig {
     public static int matrixSize = 10;
@@ -11,4 +12,8 @@ public class GameConfig {
     public static BattleBoard userBoard2;
 
     public static int currentPlayerId = 1;
+
+    public static final int TURN_TIME_LIMIT = 10;
+    public static int secondsLeft = TURN_TIME_LIMIT;
+    public static Timeline turnTimer = null;
 }
