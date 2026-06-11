@@ -6,6 +6,7 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import models.CellState;
 import models.Ship;
 import views.AlertView;
 import views.BoardSetupView;
@@ -24,7 +25,6 @@ public class GameManager {
 
     public static void handleBoardConfirmed(Stage stage) {
         if (GameConfig.currentPlayerId == 1) {
-
             String username1 = GameManager.getCurrentUsername();
             GameConfig.currentPlayerId = 2;
             String username2 = GameManager.getCurrentUsername();
@@ -38,18 +38,8 @@ public class GameManager {
 
             new BoardSetupView(GameManager.parentStage);
         } else {
-
-            GameConfig.userBoard1.getChildren().forEach(node -> {
-                if (node instanceof BoardCell cell) {
-                    cell.setDefaultActions();
-                }
-            });
-
-            GameConfig.userBoard2.getChildren().forEach(node -> {
-                if (node instanceof BoardCell cell) {
-                    cell.setDefaultActions();
-                }
-            });
+            GameConfig.userBoard1.resetAllCellActions();
+            GameConfig.userBoard2.resetAllCellActions();
 
             GameConfig.currentPlayerId = 1;
             activeGameView = new GameView(GameManager.parentStage);
@@ -62,11 +52,13 @@ public class GameManager {
         BoardCell cell = enemyBoard.getCell(x, y);
 
         if (cell.isAlreadyShot()) return;
-        cell.handleOnClick();
-        cell.applyCurrentPaint();
 
         if (cell.hasShip()) {
             Ship ship = cell.getShip();
+            ship.hit();
+
+            cell.setState(ship.isSunk() ? CellState.HIT_SHIP_SUNK : CellState.HIT_SHIP_ALIVE);
+            cell.updateStyle();
 
             if (ship.isSunk()) {
                 AlertView.showInfo(activeGameView.getStage(), "Sukces", "ZATOPIONY!", "Okręt przeciwnika idzie na dno!");
@@ -80,6 +72,8 @@ public class GameManager {
                 GameManager.resetTimer();
                 return;
             }
+        } else {
+            cell.markAsMissed();
         }
 
         GameManager.switchTurn();
@@ -115,11 +109,11 @@ public class GameManager {
             if (activeGameView != null) activeGameView.updateTimerText();
 
             if (GameConfig.secondsLeft <= 0) {
-                stopTimer();
+                GameManager.stopTimer();
 
                 Platform.runLater(() -> {
                     AlertView.showInfo(activeGameView.getStage(), "Koniec czasu", "CZAS MINĄŁ!", "Spóźniłeś się! Tura przechodzi na przeciwnika.");
-                    switchTurn();
+                    GameManager.switchTurn();
                 });
             }
         }));
@@ -141,7 +135,7 @@ public class GameManager {
     private static void endGame(String winnerName) {
         stopTimer();
         if (winnerName.isEmpty()) winnerName = "GRACZ " + GameConfig.currentPlayerId;
-        AlertView.showInfo(activeGameView.getStage(), "Koniec gry", "KONIEC BITWY!", "Zwycięzcą zostaje: " + winnerName.toUpperCase() + "!");
+        AlertView.showInfo(activeGameView.getStage(), "Koniec gry", "KONIEC BITWY!", "Zwycięzcą zostaje: " + winnerName + "!");
         activeGameView.getStage().close();
     }
 

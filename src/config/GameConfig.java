@@ -13,7 +13,7 @@ public class GameConfig {
 
     public static int currentPlayerId = 1;
 
-    public static final int TURN_TIME_LIMIT = 10;
+    public static final int TURN_TIME_LIMIT = 20;
     public static int secondsLeft = TURN_TIME_LIMIT;
     public static Timeline turnTimer = null;
 }

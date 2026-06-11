@@ -19,7 +19,8 @@ public class Ship {
         this.hits++;
         if (!this.isSunk()) return;
         for (BoardCell cell : this.cells) {
-            cell.applyCurrentPaint();
+            cell.setState(CellState.HIT_SHIP_SUNK);
+            cell.updateStyle();
         }
     }
 

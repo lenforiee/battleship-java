@@ -105,11 +105,11 @@ public class BoardSetupView extends AbstractView {
         shipsList.setPadding(new Insets(5, 5, 5, 0));
 
         shipsList.getChildren().addAll(
-                this.createShipRow(5, "Niszczyciel"),
-                this.createShipRow(4, "Krążownik"),
-                this.createShipRow(3, "Podwodny"),
-                this.createShipRow(2, "Krążowny"),
-                this.createShipRow(1, "Niszczycel")
+                this.createShipRow(5, "Lotniskowiec"),
+                this.createShipRow(4, "Pancernik"),
+                this.createShipRow(3, "Krążownik"),
+                this.createShipRow(2, "Niszczyciel"),
+                this.createShipRow(1, "Kuter podwodny")
         );
 
         ScrollPane shipsScrollPane = new ScrollPane(shipsList);
@@ -288,7 +288,7 @@ public class BoardSetupView extends AbstractView {
     }
 
     private void handleConfirmBoard() {
-        boolean boardComplete = shipCounts.values().stream().allMatch(count -> count == 0);
+        boolean boardComplete = this.shipCounts.values().stream().allMatch(count -> count == 0);
         if (!boardComplete) {
             AlertView.showInfo(this.stage, "Statki - Błąd konfiguracji", "Flota niekompletna!", "Musisz rozstawić wszystkie okręty na planszy przed zatwierdzeniem floty!");
             return;

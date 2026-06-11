@@ -13,20 +13,43 @@ public class BattleBoard extends GridPane {
     private final int size = GameConfig.matrixSize;
     private final BoardCell[][] cells = new BoardCell[size][size];
 
+    private boolean shipsVisible = true;
+
     public BattleBoard() {
-        for (int row = 0; row < size; row++) {
-            for (int col = 0; col < size; col++) {
+        for (int row = 0; row < this.size; row++) {
+            for (int col = 0; col < this.size; col++) {
                 BoardCell cell = new BoardCell(col, row);
                 this.cells[col][row] = cell;
                 this.add(cell, col, row);
             }
         }
 
-        setStyle("-fx-border-color: #324B56; -fx-border-width: 2px; -fx-background-radius: 5px; -fx-border-radius: 5px; -fx-background-color: #18252B; -fx-padding: 0; -fx-hgap: 0; -fx-vgap: 0;");
+        this.setStyle("-fx-border-color: #324B56; -fx-border-width: 2px; -fx-background-radius: 5px; -fx-border-radius: 5px; -fx-background-color: #18252B; -fx-padding: 0; -fx-hgap: 0; -fx-vgap: 0;");
     }
 
     public void setInteractionAllowed(boolean allowed) {
         this.setMouseTransparent(!allowed);
+    }
+
+    public void resetAllCellActions() {
+        this.getChildren().forEach(node -> {
+            if (node instanceof BoardCell cell) {
+                cell.setDefaultActions();
+            }
+        });
+    }
+
+    public void setShipsVisible(boolean visible) {
+        this.shipsVisible = visible;
+        for (int row = 0; row < this.size; row++) {
+            for (int col = 0; col < this.size; col++) {
+                this.cells[col][row].setRenderShipVisible(visible);
+            }
+        }
+    }
+
+    public boolean isShipsVisible() {
+        return this.shipsVisible;
     }
 
     public BoardCell getCell(int x, int y) {
@@ -34,9 +57,9 @@ public class BattleBoard extends GridPane {
     }
 
     public boolean areAllShipsSunk() {
-        for (int row = 0; row < size; row++) {
-            for (int col = 0; col < size; col++) {
-                BoardCell cell = cells[col][row];
+        for (int row = 0; row < this.size; row++) {
+            for (int col = 0; col < this.size; col++) {
+                BoardCell cell = this.cells[col][row];
                 if (cell.hasShip() && !cell.getShip().isSunk()) {
                     return false;
                 }
@@ -56,7 +79,7 @@ public class BattleBoard extends GridPane {
             int currentY = orientation == Orientation.HORIZONTAL ? startY : startY + i;
 
             BoardCell cell = this.cells[currentX][currentY];
-            if (this.isNeighbouring(currentX, currentY, newShip)) return false;
+            if (this.isPlacementInvalid(currentX, currentY, newShip)) return false;
 
             targetCells.add(cell);
             cell.setShip(newShip);
@@ -69,13 +92,12 @@ public class BattleBoard extends GridPane {
     public void clearBoard() {
         this.getChildren().forEach(node -> {
             if (node instanceof BoardCell cell) {
-                cell.setShip(null);
-                cell.applyCurrentPaint();
+                cell.resetCell();
             }
         });
     }
 
-    private boolean isNeighbouring(int currentX, int currentY, Ship ship) {
+    private boolean isPlacementInvalid(int currentX, int currentY, Ship ship) {
         List<BoardCell> shipCells = ship.getCells();
         for (int x = currentX - 1; x <= currentX + 1; x++) {
             for (int y = currentY - 1; y <= currentY + 1; y++) {

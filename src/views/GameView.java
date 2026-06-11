@@ -15,12 +15,11 @@ public class GameView extends AbstractView {
 
     private final Text turnLabel;
     private final Text timerLabel;
-    private final HBox boardsContainer;
-    private final VBox playerSection;
-    private final VBox enemySection;
+    private final VBox boardSection;
+    private final Text boardTitle;
 
     public GameView(Stage parentStage) {
-        super("Statki - Rozgrywka", 1500, 850, 10);
+        super("Statki - Rozgrywka", 1000, 750, 10);
 
         this.root.setPadding(new Insets(25));
         this.root.setAlignment(Pos.CENTER);
@@ -50,6 +49,16 @@ public class GameView extends AbstractView {
 
         infoBox.getChildren().addAll(this.turnLabel, this.timerLabel);
 
+        Button peekBtn = this.createStyledButton(
+                "PODGLĄD FLOTY",
+                Color.rgb(172, 199, 200),
+                "#1D2E36",
+                "#63888E",
+                DS_BLUE,
+                DS_BLACK,
+                FONT_MAIN_25
+        );
+
         Button exitBtn = this.createStyledButton(
                 "OPUŚĆ GRĘ",
                 Color.rgb(230, 57, 70),
@@ -60,9 +69,12 @@ public class GameView extends AbstractView {
                 FONT_MAIN_25
         );
 
+        peekBtn.setOnMousePressed(e -> showMyBoard());
+        peekBtn.setOnMouseReleased(e -> showEnemyBoard());
+
         exitBtn.setOnAction(e -> {
             boolean answer = AlertView.showConfirm(
-                    stage,
+                    this.stage,
                     "Opuść gre?",
                     "Opuszczenie gry",
                     "Czy napewno chcesz opuścić grę?"
@@ -74,36 +86,24 @@ public class GameView extends AbstractView {
             parentStage.show();
         });
 
-        sidePanel.getChildren().addAll(gameTitle, infoBox, exitBtn);
+        sidePanel.getChildren().addAll(gameTitle, infoBox, peekBtn, exitBtn);
 
-        this.boardsContainer = new HBox(50);
-        this.boardsContainer.setAlignment(Pos.CENTER);
+        this.boardSection = new VBox(15);
+        this.boardSection.setAlignment(Pos.CENTER);
+        this.boardTitle = new Text();
+        this.boardTitle.setFont(FONT_MAIN_25);
+        this.boardTitle.setFill(Color.web("#ACC7C8"));
+        this.boardSection.getChildren().add(this.boardTitle);
 
-        this.playerSection = new VBox(10);
-        this.playerSection.setAlignment(Pos.CENTER);
-        Text playerTitle = new Text("TWOJA PLANSZA");
-        playerTitle.setFont(FONT_MAIN_25);
-        playerTitle.setFill(Color.web("#ACC7C8"));
-        this.playerSection.getChildren().add(playerTitle);
-
-        this.enemySection = new VBox(10);
-        this.enemySection.setAlignment(Pos.CENTER);
-        Text enemyTitle = new Text("PLANSZA PRZECIWNIKA");
-        enemyTitle.setFont(FONT_MAIN_25);
-        enemyTitle.setFill(Color.web("#ACC7C8"));
-        this.enemySection.getChildren().add(enemyTitle);
-
-        this.boardsContainer.getChildren().addAll(playerSection, enemySection);
-        mainLayout.getChildren().addAll(sidePanel, this.boardsContainer);
+        mainLayout.getChildren().addAll(sidePanel, this.boardSection);
         this.root.getChildren().add(mainLayout);
 
         this.refreshView();
-
         this.stage.setScene(this.scene);
 
         String username1 = GameManager.getCurrentUsername();
         AlertView.showInfo(
-                stage,
+                this.stage,
                 "Start bitwy",
                 "Obie floty gotowe!",
                 "Czas rozpocząć bitwę\n" + username1 + ", przygotuj się i kliknij OK."
@@ -113,22 +113,35 @@ public class GameView extends AbstractView {
 
     public void refreshView() {
         this.turnLabel.setText(GameManager.getCurrentUsername());
+        this.showEnemyBoard();
+    }
 
-        this.playerSection.getChildren().remove(1, this.playerSection.getChildren().size());
-        this.enemySection.getChildren().remove(1, this.enemySection.getChildren().size());
+    private void showEnemyBoard() {
+        this.boardTitle.setText("PLANSZA PRZECIWNIKA (STRZELAJ)");
+        this.boardSection.getChildren().clear();
+        this.boardSection.getChildren().add(this.boardTitle);
+
+        components.BattleBoard enemyBoard = (GameConfig.currentPlayerId == 1) ? GameConfig.userBoard2 : GameConfig.userBoard1;
+        enemyBoard.setInteractionAllowed(true);
+        enemyBoard.setShipsVisible(false);
+
+        boardSection.getChildren().add(enemyBoard);
+    }
+
+    private void showMyBoard() {
+        this.boardTitle.setText("TWOJA FLOTA (PODGLĄD)");
+        this.boardSection.getChildren().clear();
+        this.boardSection.getChildren().add(this.boardTitle);
 
         components.BattleBoard myBoard = (GameConfig.currentPlayerId == 1) ? GameConfig.userBoard1 : GameConfig.userBoard2;
-        components.BattleBoard enemyBoard = (GameConfig.currentPlayerId == 1) ? GameConfig.userBoard2 : GameConfig.userBoard1;
-
         myBoard.setInteractionAllowed(false);
-        enemyBoard.setInteractionAllowed(true);
+        myBoard.setShipsVisible(true);
 
-        this.playerSection.getChildren().add(myBoard);
-        this.enemySection.getChildren().add(enemyBoard);
+        boardSection.getChildren().add(myBoard);
     }
 
     public void updateTimerText() {
-        timerLabel.setText("CZAS: " + GameConfig.secondsLeft + "s");
+        this.timerLabel.setText("CZAS: " + GameConfig.secondsLeft + "s");
     }
 
     public Stage getStage() {
